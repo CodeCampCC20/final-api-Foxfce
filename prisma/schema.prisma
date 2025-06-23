@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int             @id @default(autoincrement())
+  username      String          @unique
+  password      String          @db.VarChar(100)
+  health_record Health_Record[]
+  doctor_note   Doctor_Note[]
+}
+
+model Health_Record {
+  id         Int                @id @default(autoincrement())
+  type       Health_Record_Type @default(PHR)
+  value      String
+  date       DateTime           @default(now())
+  patient    User               @relation(fields: [patient_Id], references: [id])
+  patient_Id Int
+}
+
+enum Health_Record_Type {
+  EHR
+  EMR
+  PHR
+}
+
+model Doctor {
+  id             Int                   @id @default(autoincrement())
+  username       String                @unique
+  password       String
+  specialization Doctor_Specialization @default(FAMILY_MEDICINE)
+  doctor_note    Doctor_Note[]
+}
+
+enum Doctor_Specialization {
+  CARDIOLOGY
+  DERMATOLOGY
+  NEUROLOGY
+  PEDIATRICS
+  GYNECOLOGY
+  ONCOLOGY
+  FAMILY_MEDICINE
+  UROLOGY
+  ENDOCRINOLOGY
+  PSYCHIATRY
+  EMERGENCY_MEDICINE
+  GENERAL_SURGERY
+  RADIOLOGY
+  PLASTICSURGERY
+  NONE
+}
+
+model Doctor_Note {
+  id         Int      @id @default(autoincrement())
+  note       String
+  createAt   DateTime @default(now())
+  patient    User     @relation(fields: [patient_Id], references: [id])
+  patient_Id Int
+  doctor     Doctor   @relation(fields: [doctorId], references: [id])
+  doctorId   Int
+}
