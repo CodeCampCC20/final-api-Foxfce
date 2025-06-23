@@ -67,6 +67,7 @@ model Doctor_Note {
   id         Int      @id @default(autoincrement())
   note       String
   createAt   DateTime @default(now())
+  updateAt   DateTime? @updatedAt()
   patient    User     @relation(fields: [patient_Id], references: [id])
   patient_Id Int
   doctor     Doctor   @relation(fields: [doctorId], references: [id])

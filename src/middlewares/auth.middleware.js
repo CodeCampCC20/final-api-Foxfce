@@ -20,6 +20,7 @@ export const authCheck = (req, res, next) => {
         // req.headers.id = decode.id;
         req.user = decode;
         req.headers.role = decode.role;
+        req.headers.id = decode.id;
         next();
       }
       if (req.method === "PATCH" || req.method === "POST" || req.method === "DELETE" || req.method === "PUT") {
@@ -39,12 +40,13 @@ export const authCheck = (req, res, next) => {
 
 export const checkRoleDoctor = (req, res, next) => {
   try {
-    const {id, role} = req.headers
+    const {role,id} = req.headers
     if(role === "doctor"){
+      console.log('id', id);
       next();
+    }else{
+      createError(401, 'User Unauthorized');
     }
-
-    createError(401, 'User Unauthorized');
 
   }catch (error) {
     next(error);
